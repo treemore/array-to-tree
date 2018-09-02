@@ -2,9 +2,12 @@
 var property = require('nested-property');
 var keyBy = require('lodash.keyby');
 
-function createTree(array, rootNodes, customID, childrenProperty) {
+function createTree(array, rootNodes, customID, childrenProperty,callbacks) {
   var tree = [];
-
+  var each;
+  if(callbacks){
+  each=callbacks.each
+  }
   for (var rootNode in rootNodes) {
     var node = rootNodes[rootNode];
     var childNode = array[node[customID]];
@@ -18,11 +21,15 @@ function createTree(array, rootNodes, customID, childrenProperty) {
         array,
         childNode,
         customID,
-        childrenProperty
+        childrenProperty,
+        callbacks
       );
     }
 
     tree.push(node);
+    if(each){
+      each(node)
+    }
   }
 
   return tree;
@@ -104,6 +111,7 @@ module.exports = function arrayToTree(data, options) {
     grouped,
     grouped[options.rootID],
     options.customID,
-    options.childrenProperty
+    options.childrenProperty,
+    options.callbacks
   );
 };
